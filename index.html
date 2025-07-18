@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi primer encuentro con la IA - Mural colaborativo</title>
+  <script>
+    let responses = [];
+
+    function openModal() {
+      document.getElementById('responseModal').style.display = 'block';
+    }
+
+    function closeModal() {
+      document.getElementById('responseModal').style.display = 'none';
+      document.getElementById('responseForm').reset();
+    }
+
+    function renderBoard() {
+      const board = document.getElementById('notesBoard');
+      board.innerHTML = '';
+      responses.forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'note';
+        div.innerHTML = `
+          <h4>${r.nombre}</h4>
+          <p><strong>🛠️ Herramienta:</strong> ${r.herramienta}</p>
+          <p><strong>📝 Experiencia:</strong> ${r.experiencia}</p>
+          <p><strong>💭 Sensaciones:</strong> ${r.sensaciones}</p>
+          ${r.cambios ? `<p><strong>👥 Cambios observados:</strong> ${r.cambios}</p>` : ''}
+        `;
+        board.appendChild(div);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      fetch("https://script.google.com/macros/s/AKfycbyvs4-IJgcJnYDQdFdlCnu16AbUdCbZo6TSCMU0ZY2bSj3qVqUTMxffG40E1TW-NLI/exec")
+        .then(res => res.json())
+        .then(data => {
+          responses = data.reverse();
+          renderBoard();
+        });
+    });
+
+    function submitForm(e) {
+      e.preventDefault();
+      const form = e.target;
+      const data = {
+        nombre: form.nombre.value,
+        herramienta: form.herramienta.value,
+        experiencia: form.experiencia.value,
+        sensaciones: form.sensaciones.value,
+        cambios: form.cambios.value
+      };
+
+      fetch("https://script.google.com/macros/s/AKfycbyvs4-IJgcJnYDQdFdlCnu16AbUdCbZo6TSCMU0ZY2bSj3qVqUTMxffG40E1TW-NLI/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+
+      // Agregar visualmente
+      responses.unshift(data);
+      renderBoard();
+      closeModal();
+    }
+  </script>
+  <style>
+    .questions {
+        background: #ffffff;
+        border-left: 5px solid #007bff;
+        padding: 1em;
+        border-radius: 10px;
+        margin-top: 2em;
+    }
+    .questions h2 {
+        color: #007bff;
+        margin-bottom: 0.5em;
+    }
+    .questions ul {
+        padding-left: 1.2em;
+    }
+    .questions li {
+        margin-bottom: 0.5em;
+        font-weight: 500;
+    }
+    
+    body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
+    h1 { text-align: center; }
+    .board { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1em; margin-top: 2em; }
+    .note { background: #fff3cd; padding: 1em; border-radius: 10px; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); }
+    .modal-content { background: white; margin: 10% auto; padding: 2em; width: 90%; max-width: 500px; border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <h1>🤖 Mi primer encuentro con la IA</h1>
+  <p style="text-align:center;"><button onclick="openModal()">Agregar experiencia</button></p>
+  
+    <div class="questions">
+        <h2>💭 Preguntas para reflexionar:</h2>
+        <ul>
+            <li>¿Cuál fue tu primera experiencia directa con una herramienta de IA generativa?</li>
+            <li>¿Qué sensaciones te generó? ¿Asombro, preocupación, curiosidad?</li>
+            <li>¿Has observado cambios en el comportamiento de tus estudiantes que puedas relacionar con el uso de estas tecnologías?</li>
+        </ul>
+    </div>
+    <div class="board" id="notesBoard"></div>
+    
+
+  <div class="modal" id="responseModal">
+    <div class="modal-content">
+      <form id="responseForm" onsubmit="submitForm(event)">
+        <label>Tu nombre:<br><input type="text" name="nombre" required></label><br><br>
+        <label>Primera herramienta de IA:<br><input type="text" name="herramienta" required></label><br><br>
+        <label>Describe tu experiencia:<br><textarea name="experiencia" required></textarea></label><br><br>
+        <label>Sensaciones:<br><textarea name="sensaciones" required></textarea></label><br><br>
+        <label>Cambios observados:<br><textarea name="cambios"></textarea></label><br><br>
+        <button type="submit">✨ Publicar experiencia</button>
+        <button type="button" onclick="closeModal()">Cancelar</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
