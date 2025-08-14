@@ -23,11 +23,11 @@
         const div = document.createElement('div');
         div.className = 'note';
         div.innerHTML = `
-          <h4>${r.nombre}</h4>
-          <p><strong>🛠️ Herramienta:</strong> ${r.herramienta}</p>
-          <p><strong>📝 Experiencia:</strong> ${r.experiencia}</p>
-          <p><strong>💭 Sensaciones:</strong> ${r.sensaciones}</p>
-          ${r.cambios ? `<p><strong>👥 Cambios observados:</strong> ${r.cambios}</p>` : ''}
+          <h4>${r.Nombre}</h4>
+          <p><strong>🛠️ Herramienta:</strong> ${r.Herramienta}</p>
+          <p><strong>📝 Experiencia:</strong> ${r.Experiencia}</p>
+          <p><strong>💭 Sensaciones:</strong> ${r.Sensaciones}</p>
+          ${r.cambios ? `<p><strong>👥 Cambios observados:</strong> ${r.Cambios}</p>` : ''}
         `;
         board.appendChild(div);
       });
