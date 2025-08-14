@@ -45,27 +45,17 @@
     function submitForm(e) {
       e.preventDefault();
       const form = e.target;
-      const data = {
-        nombre: form.nombre.value,
-        herramienta: form.herramienta.value,
-        experiencia: form.experiencia.value,
-        sensaciones: form.sensaciones.value,
-        cambios: form.cambios.value
-      };
+      const formData = new FormData(form);
 
       fetch("https://script.google.com/macros/s/AKfycbyvs4-IJgcJnYDQdFdlCnu16AbUdCbZo6TSCMU0ZY2bSj3qVqUTMxffG40E1TW-NLI/exec", {
         method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
+        body: formData
+      }).then(() => {
+        const data = Object.fromEntries(formData.entries());
+        responses.unshift(data);
+        renderBoard();
+        closeModal();
       });
-
-      // Agregar visualmente
-      responses.unshift(data);
-      renderBoard();
-      closeModal();
     }
   </script>
   <style>
@@ -100,16 +90,15 @@
   <h1>🤖 Mi primer encuentro con la IA</h1>
   <p style="text-align:center;"><button onclick="openModal()">Agregar experiencia</button></p>
   
-    <div class="questions">
-        <h2>💭 Preguntas para reflexionar:</h2>
-        <ul>
-            <li>¿Cuál fue tu primera experiencia directa con una herramienta de IA generativa?</li>
-            <li>¿Qué sensaciones te generó? ¿Asombro, preocupación, curiosidad?</li>
-            <li>¿Has observado cambios en el comportamiento de tus estudiantes que puedas relacionar con el uso de estas tecnologías?</li>
-        </ul>
-    </div>
-    <div class="board" id="notesBoard"></div>
-    
+  <div class="questions">
+      <h2>💭 Preguntas para reflexionar:</h2>
+      <ul>
+          <li>¿Cuál fue tu primera experiencia directa con una herramienta de IA generativa?</li>
+          <li>¿Qué sensaciones te generó? ¿Asombro, preocupación, curiosidad?</li>
+          <li>¿Has observado cambios en el comportamiento de tus estudiantes que puedas relacionar con el uso de estas tecnologías?</li>
+      </ul>
+  </div>
+  <div class="board" id="notesBoard"></div>
 
   <div class="modal" id="responseModal">
     <div class="modal-content">
