@@ -4,72 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Mi primer encuentro con la IA - Mural colaborativo</title>
-  <script>
-    let responses = [];
-
-    function openModal() {
-      document.getElementById('responseModal').style.display = 'block';
-    }
-
-    function closeModal() {
-      document.getElementById('responseModal').style.display = 'none';
-      document.getElementById('responseForm').reset();
-    }
-
-    function renderBoard() {
-      const board = document.getElementById('notesBoard');
-      board.innerHTML = '';
-      responses.forEach(r => {
-        const div = document.createElement('div');
-        div.className = 'note';
-        div.innerHTML = `
-          <h4>${r.Nombre}</h4>
-          <p><strong>🛠️ Herramienta:</strong> ${r.Herramienta}</p>
-          <p><strong>📝 Experiencia:</strong> ${r.Experiencia}</p>
-          <p><strong>💭 Sensaciones:</strong> ${r.Sensaciones}</p>
-          ${r.cambios ? `<p><strong>👥 Cambios observados:</strong> ${r.Cambios}</p>` : ''}
-        `;
-        board.appendChild(div);
-      });
-    }
-
-fetch("https://script.google.com/macros/s/AKfycbyvs4‑IJgcJnYDQdFdlCnu16AbUdCbZo6TSCMU0ZY2bSj3qVqUTMxffG40E1TW‑NLI/exec", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(data)
-})
-.then(response => {
-  if (!response.ok) {
-    throw new Error(`Error del servidor: ${response.status}`);
-  }
-  return response.text(); // ajustable según lo que envie tu script
-})
-.then(_ => {
-  alert("Tu experiencia fue publicada exitosamente.");
-  cargarEntradas(); // refresca el mural con datos actualizados
-})
-.catch(error => {
-  console.error("Error al enviar los datos:", error);
-  alert("No se pudo publicar la experiencia. Revisá la consola del navegador.");
-});
-    });
-
-    function submitForm(e) {
-      e.preventDefault();
-      const form = e.target;
-      const formData = new FormData(form);
-
-      fetch("https://script.google.com/macros/s/AKfycbyvs4-IJgcJnYDQdFdlCnu16AbUdCbZo6TSCMU0ZY2bSj3qVqUTMxffG40E1TW-NLI/exec", {
-        method: "POST",
-        body: formData
-      }).then(() => {
-        const data = Object.fromEntries(formData.entries());
-        responses.unshift(data);
-        renderBoard();
-        closeModal();
-      });
-    }
-  </script>
   <style>
     .questions {
         background: #ffffff;
@@ -89,7 +23,7 @@ fetch("https://script.google.com/macros/s/AKfycbyvs4‑IJgcJnYDQdFdlCnu16AbUdCbZ
         margin-bottom: 0.5em;
         font-weight: 500;
     }
-    
+
     body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
     h1 { text-align: center; }
     .board { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1em; margin-top: 2em; }
@@ -101,7 +35,7 @@ fetch("https://script.google.com/macros/s/AKfycbyvs4‑IJgcJnYDQdFdlCnu16AbUdCbZ
 <body>
   <h1>🤖 Mi primer encuentro con la IA</h1>
   <p style="text-align:center;"><button onclick="openModal()">Agregar experiencia</button></p>
-  
+
   <div class="questions">
       <h2>💭 Preguntas para reflexionar:</h2>
       <ul>
@@ -110,6 +44,7 @@ fetch("https://script.google.com/macros/s/AKfycbyvs4‑IJgcJnYDQdFdlCnu16AbUdCbZ
           <li>¿Has observado cambios en el comportamiento de tus estudiantes que puedas relacionar con el uso de estas tecnologías?</li>
       </ul>
   </div>
+
   <div class="board" id="notesBoard"></div>
 
   <div class="modal" id="responseModal">
@@ -125,5 +60,57 @@ fetch("https://script.google.com/macros/s/AKfycbyvs4‑IJgcJnYDQdFdlCnu16AbUdCbZ
       </form>
     </div>
   </div>
+
+  <script>
+    let responses = [];
+
+    function openModal() {
+      document.getElementById('responseModal').style.display = 'block';
+    }
+
+    function closeModal() {
+      document.getElementById('responseModal').style.display = 'none';
+      document.getElementById('responseForm').reset();
+    }
+
+    function renderBoard() {
+      const board = document.getElementById('notesBoard');
+      board.innerHTML = '';
+      responses.forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'note';
+        div.innerHTML = `
+          <h4>${r.Nombre || r.nombre}</h4>
+          <p><strong>🛠️ Herramienta:</strong> ${r.Herramienta || r.herramienta}</p>
+          <p><strong>📝 Experiencia:</strong> ${r.Experiencia || r.experiencia}</p>
+          <p><strong>💭 Sensaciones:</strong> ${r.Sensaciones || r.sensaciones}</p>
+          ${r.Cambios || r.cambios ? `<p><strong>👥 Cambios observados:</strong> ${r.Cambios || r.cambios}</p>` : ''}
+        `;
+        board.appendChild(div);
+      });
+    }
+
+    function submitForm(e) {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+
+      fetch("https://script.google.com/macros/s/AKfycbyvs4-IJgcJnYDQdFdlCnu16AbUdCbZo6TSCMU0ZY2bSj3qVqUTMxffG40E1TW-NLI/exec", {
+        method: "POST",
+        body: formData
+      })
+      .then(() => {
+        const data = Object.fromEntries(formData.entries());
+        responses.unshift(data);
+        renderBoard();
+        closeModal();
+        alert("✅ Tu experiencia fue enviada con éxito.");
+      })
+      .catch(error => {
+        console.error("❌ Error al enviar los datos:", error);
+        alert("Ocurrió un error al enviar tu experiencia.");
+      });
+    }
+  </script>
 </body>
 </html>
